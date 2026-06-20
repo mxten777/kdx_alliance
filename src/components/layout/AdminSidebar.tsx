@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
@@ -11,7 +12,14 @@ import {
   Car
 } from 'lucide-react'
 
-const navGroups = [
+type NavItem = {
+  label: string
+  href: string
+  icon: React.ComponentType<{ className?: string }>
+  exact?: boolean
+}
+
+const navGroups: { label: string; items: NavItem[] }[] = [
   {
     label: '운영 현황',
     items: [

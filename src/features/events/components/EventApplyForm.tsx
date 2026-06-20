@@ -17,14 +17,22 @@ const schema = z.object({
   organization: z.string().optional(),
   phone: z.string().min(9, '연락처를 입력해 주세요.'),
   email: z.string().email('이메일 형식이 올바르지 않습니다.'),
-  participant_count: z.coerce.number().min(1, '1인 이상이어야 합니다.').max(100),
+  participant_count: z.number().min(1, '1인 이상이어야 합니다.').max(100),
   memo: z.string().optional(),
   privacy_agreed: z.literal(true, {
-    errorMap: () => ({ message: '개인정보 처리 방침에 동의해 주세요.' }),
+    message: '개인정보 처리 방침에 동의해 주세요.',
   }),
 })
 
-type FormData = z.infer<typeof schema>
+type FormData = {
+  applicant_name: string
+  organization?: string
+  phone: string
+  email: string
+  participant_count: number
+  memo?: string
+  privacy_agreed: true
+}
 
 interface EventApplyFormProps {
   eventId: string
@@ -124,7 +132,7 @@ export function EventApplyForm({
           type="number"
           min="1"
           max={maxParticipants ? maxParticipants - currentParticipants : 100}
-          {...register('participant_count')}
+          {...register('participant_count', { valueAsNumber: true })}
         />
         {errors.participant_count && <p className="text-xs text-red-500">{errors.participant_count.message}</p>}
       </div>

@@ -21,14 +21,26 @@ const schema = z.object({
   start_time: z.string().min(1),
   end_time: z.string().min(1),
   purpose: z.string().min(5, '사용 목적을 입력해 주세요.'),
-  participant_count: z.coerce.number().min(1).optional(),
+  participant_count: z.number().min(1).optional(),
   memo: z.string().optional(),
   privacy_agreed: z.literal(true, {
-    errorMap: () => ({ message: '개인정보 처리 방침에 동의해 주세요.' }),
+    message: '개인정보 처리 방침에 동의해 주세요.',
   }),
 })
 
-type FormData = z.infer<typeof schema>
+type FormData = {
+  applicant_name: string
+  organization?: string
+  phone: string
+  email: string
+  desired_date: string
+  start_time: string
+  end_time: string
+  purpose: string
+  participant_count?: number
+  memo?: string
+  privacy_agreed: true
+}
 
 interface SpaceReserveFormProps {
   spaceId: string
@@ -133,7 +145,7 @@ export function SpaceReserveForm({ spaceId, spaceName, operatingHours }: SpaceRe
 
       <div className="space-y-1.5">
         <Label>예상 인원</Label>
-        <Input type="number" min="1" placeholder="예상 참석 인원" {...register('participant_count')} />
+        <Input type="number" min="1" placeholder="예상 참석 인원" {...register('participant_count', { valueAsNumber: true })} />
       </div>
 
       <div className="space-y-1.5">

@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -24,7 +25,7 @@ const schema = z.object({
   subject: z.string().min(2, '제목을 입력해 주세요.'),
   content: z.string().min(10, '문의 내용을 10자 이상 입력해 주세요.'),
   privacy_agreed: z.literal(true, {
-    errorMap: () => ({ message: '개인정보 처리 방침에 동의해 주세요.' }),
+    message: '개인정보 처리 방침에 동의해 주세요.',
   }),
 })
 
@@ -39,7 +40,7 @@ const inquiryTypes = [
   { value: 'partnership', label: '제휴 문의' },
 ]
 
-export default function ContactPage() {
+function ContactForm() {
   const searchParams = useSearchParams()
   const typeParam = searchParams.get('type')
   const [submitted, setSubmitted] = useState(false)
@@ -220,5 +221,13 @@ export default function ContactPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function ContactPage() {
+  return (
+    <Suspense>
+      <ContactForm />
+    </Suspense>
   )
 }

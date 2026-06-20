@@ -35,14 +35,14 @@ async function getRelevantContext(query: string, supabase: Awaited<ReturnType<ty
       .limit(5)
 
     if (faqs) {
-      const relevant = faqs.filter((f) =>
+      const relevant = faqs.filter((f: { question: string; answer: string }) =>
         keywords.some((k) =>
           f.question.toLowerCase().includes(k) || f.answer.toLowerCase().includes(k)
         )
       )
       if (relevant.length > 0) {
         contexts.push('=== FAQ 정보 ===')
-        relevant.forEach((f) => {
+        relevant.forEach((f: { question: string; answer: string }) => {
           contexts.push(`Q: ${f.question}\nA: ${f.answer}`)
         })
       }
@@ -59,7 +59,7 @@ async function getRelevantContext(query: string, supabase: Awaited<ReturnType<ty
 
       if (events?.length) {
         contexts.push('=== 예정 행사 ===')
-        events.forEach((e) => {
+        events.forEach((e: { title: string; start_date: string | null; end_date: string | null; location: string | null; is_free: boolean }) => {
           contexts.push(`행사명: ${e.title}\n일정: ${e.start_date?.split('T')[0]} ~ ${e.end_date?.split('T')[0]}\n장소: ${e.location ?? '미정'}\n참가비: ${e.is_free ? '무료' : '유료'}`)
         })
       }
@@ -75,7 +75,7 @@ async function getRelevantContext(query: string, supabase: Awaited<ReturnType<ty
 
       if (tours?.length) {
         contexts.push('=== 견학 프로그램 ===')
-        tours.forEach((t) => {
+        tours.forEach((t: { title: string; tour_type: string; duration_hours: number | null; max_participants: number | null; is_free: boolean; operating_days: string[] | null }) => {
           contexts.push(`프로그램명: ${t.title}\n유형: ${t.tour_type}\n소요시간: ${t.duration_hours ?? '?'}시간\n최대 ${t.max_participants ?? '?'}인\n운영일: ${t.operating_days?.join(', ')}요일\n참가비: ${t.is_free ? '무료' : '유료'}`)
         })
       }
@@ -91,7 +91,7 @@ async function getRelevantContext(query: string, supabase: Awaited<ReturnType<ty
 
       if (spaces?.length) {
         contexts.push('=== 예약 가능 공간/시설 ===')
-        spaces.forEach((s) => {
+        spaces.forEach((s: { name: string; capacity: number | null; operating_hours: string | null; is_free: boolean }) => {
           contexts.push(`공간명: ${s.name}\n수용: ${s.capacity ?? '?'}인\n운영: ${s.operating_hours ?? '미정'}\n이용료: ${s.is_free ? '무료' : '유료'}`)
         })
       }
@@ -109,7 +109,7 @@ async function getRelevantContext(query: string, supabase: Awaited<ReturnType<ty
 
       if (posts?.length) {
         contexts.push('=== 지원사업/공모 ===')
-        posts.forEach((p) => {
+        posts.forEach((p: { title: string; summary: string | null; deadline: string | null }) => {
           contexts.push(`사업명: ${p.title}\n${p.summary ?? ''}\n마감: ${p.deadline ?? '미정'}`)
         })
       }

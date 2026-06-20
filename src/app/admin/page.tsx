@@ -2,17 +2,20 @@ import { createClient } from '@/lib/supabase/server'
 import { KpiCard } from '@/components/common/KpiCard'
 import {
   CalendarDays, MapPin, Building2, MessageSquare,
-  Users, ParkingCircle, Shield, FileText
+  Users, Shield, FileText
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, PieChart, Pie, Cell, Legend
-} from 'recharts'
+import { AdminCharts } from '@/components/admin/AdminCharts'
 import { ReservationStatusBadge } from '@/components/common/StatusBadge'
 import { formatDate } from '@/lib/utils'
+import type { ReservationStatus } from '@/types/models'
 
-const COLORS = ['#0F2959', '#2563EB', '#10B981', '#F59E0B', '#EF4444']
+type ParkingZone = {
+  name: string
+  total_spaces: number
+  occupied_spaces: number
+  code: string
+}
 
 export default async function AdminDashboardPage() {
   const supabase = await createClient()
@@ -20,14 +23,14 @@ export default async function AdminDashboardPage() {
   type EventReg = {
     id: string
     applicant_name: string
-    status: string
+    status: ReservationStatus
     created_at: string
     events: { title: string } | null
   }
   type TourResv = {
     id: string
     applicant_name: string
-    status: string
+    status: ReservationStatus
     desired_date: string
     tours: { title: string } | null
   }
@@ -60,7 +63,7 @@ export default async function AdminDashboardPage() {
   ]
 
   // 주차 현황 차트 데이터
-  const parkingData = (parkingZones.data ?? []).map((z) => ({
+  const parkingData = (parkingZones.data as ParkingZone[] ?? []).map((z) => ({
     name: z.name,
     사용중: z.occupied_spaces,
     여유: z.total_spaces - z.occupied_spaces,
@@ -93,57 +96,7 @@ export default async function AdminDashboardPage() {
         ))}
       </div>
 
-      {/* Charts row */}
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-        {/* Parking status */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-base font-semibold">
-              <ParkingCircle className="h-4 w-4 text-orange-500" /> 주차 현황 (스마트한)
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={parkingData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                <XAxis type="number" tick={{ fontSize: 11 }} />
-                <YAxis dataKey="name" type="category" tick={{ fontSize: 11 }} width={80} />
-                <Tooltip />
-                <Bar dataKey="사용중" stackId="a" fill="#2563EB" />
-                <Bar dataKey="여유" stackId="a" fill="#DBEAFE" radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Inquiry type pie */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-base font-semibold">
-              <MessageSquare className="h-4 w-4 text-violet-500" /> 신규 문의 유형 분포
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {pieData.length === 0 ? (
-              <div className="flex h-50 items-center justify-center text-slate-400 text-sm">
-                신규 문의 없음
-              </div>
-            ) : (
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie data={pieData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3} dataKey="value">
-                    {pieData.map((_, index) => (
-                      <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Legend />
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+      <AdminCharts parkingData={parkingData} pieData={pieData} />
 
       {/* Recent activity */}
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">

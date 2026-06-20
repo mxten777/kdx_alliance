@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { formatDate } from '@/lib/utils'
 import Link from 'next/link'
+import type { ReservationStatus } from '@/types/models'
 
 type TourReservation = {
   id: string
@@ -13,7 +14,7 @@ type TourReservation = {
   desired_date: string
   participant_count: number
   phone: string
-  status: string
+  status: ReservationStatus
   created_at: string
   tours: { title: string; tour_type: string } | null
 }

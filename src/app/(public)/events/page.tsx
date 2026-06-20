@@ -8,6 +8,7 @@ import { formatDate } from '@/lib/utils'
 import { EventStatusBadge } from '@/components/common/StatusBadge'
 import type { Event } from '@/types/models'
 import { EVENT_CATEGORY_MAP } from '@/lib/constants/categories'
+import { PageHero } from '@/components/layout/PageHero'
 
 const categories = ['전체', '축제', '전시', '공연', '세미나', '기업행사', '투어']
 

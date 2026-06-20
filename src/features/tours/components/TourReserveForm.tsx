@@ -18,15 +18,25 @@ const schema = z.object({
   phone: z.string().min(9, '연락처를 입력해 주세요.'),
   email: z.string().email('이메일 형식이 올바르지 않습니다.'),
   desired_date: z.string().min(1, '희망 날짜를 선택해 주세요.'),
-  participant_count: z.coerce.number().min(1).max(200),
+  participant_count: z.number().min(1).max(200),
   visit_purpose: z.string().optional(),
   memo: z.string().optional(),
   privacy_agreed: z.literal(true, {
-    errorMap: () => ({ message: '개인정보 처리 방침에 동의해 주세요.' }),
+    message: '개인정보 처리 방침에 동의해 주세요.',
   }),
 })
 
-type FormData = z.infer<typeof schema>
+type FormData = {
+  applicant_name: string
+  organization: string
+  phone: string
+  email: string
+  desired_date: string
+  participant_count: number
+  visit_purpose?: string
+  memo?: string
+  privacy_agreed: true
+}
 
 interface TourReserveFormProps {
   tourId: string
@@ -134,7 +144,7 @@ export function TourReserveForm({
             type="number"
             min={minParticipants}
             max={maxParticipants ?? 200}
-            {...register('participant_count')}
+            {...register('participant_count', { valueAsNumber: true })}
           />
           {errors.participant_count && <p className="text-xs text-red-500">{errors.participant_count.message}</p>}
         </div>

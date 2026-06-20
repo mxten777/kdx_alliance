@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { formatDateTime } from '@/lib/utils'
 import Link from 'next/link'
 import { INQUIRY_TYPE_LABEL_MAP } from '@/lib/constants/categories'
+import type { InquiryStatus } from '@/types/models'
 
 type Inquiry = {
   id: string
@@ -14,7 +15,7 @@ type Inquiry = {
   organization: string | null
   subject: string
   phone: string
-  status: string
+  status: InquiryStatus
   created_at: string
 }
 
